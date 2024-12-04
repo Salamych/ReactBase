@@ -1,0 +1,14 @@
+<h3>Class max=3</h3>
+		<CounterClass max={3} />
+		<h3>Class max=5</h3>
+		<CounterClass max={5} />
+		<hr/>
+		<h3>Fn max=3</h3>
+		<CounterFn max={3}/>
+		<h3>Fn max=5</h3>
+		<CounterFn max={5}/>
+		<hr/>
+		<div>Text</div>
+		<UserCard name="Dmitry" text="Hi there!" />
+		<UserCard name="Igor" text="Hi!"/>
+		<UserCard name="Vitalii" text="Hello!"/>
