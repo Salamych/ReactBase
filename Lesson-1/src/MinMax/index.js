@@ -1,12 +1,8 @@
 import React, { useRef, useEffect } from 'react'
-import PropTypes from 'prop-types';
+import propTypes from './props';
+import style from './style.module.css';
 
-MinMax.propTypes = {
-	min: PropTypes.number,
-	max: PropTypes.number.isRequired,
-	current: PropTypes.number.isRequired,
-	onChange: PropTypes.func.isRequired
-}
+MinMax.propTypes = propTypes;
 
 function MinMax({ min = 1, max, current, onChange }){
 
@@ -39,9 +35,16 @@ function MinMax({ min = 1, max, current, onChange }){
 	},[current])
 
 	return <div>
-		<button type="button" onClick={ dec }>-</button>
-		<input ref={inp} type="text" defaultValue={ current } onBlur={parseCurrentStr} onKeyUp={keyUp}/>
-		<button type="button" onClick={ inc }>+</button>
+		<button className='btn btn-warning' type="button" onClick={ dec }>-</button>
+		<input 
+			className={style.inp} 
+			ref={inp} 
+			type="text" 
+			defaultValue={ current } 
+			onBlur={parseCurrentStr} 
+			onKeyUp={keyUp}
+		/>
+		<button className='btn btn-success' type="button" onClick={ inc }>+</button>
 	</div>
 }
 

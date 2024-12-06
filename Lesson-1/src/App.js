@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import MinMax from './MinMax';
-//import RemoveProducts from './RemoveProducts';
+import ProductCard from './ProductCard';
+import ModalCard from './ModalCard';
+
 
 export default function(){
 	let [ products, setProducts ] = useState(productsStub());
+	let [ showModal, setShowModal ] = useState(false);
 
 	let total = products.reduce((accum, el) => {return accum + (el.price*el.cnt)},0);
 	let setCnt = (id, cnt) => {
@@ -15,7 +18,7 @@ export default function(){
 		setProducts(products.filter(pr => pr.id != id));
 	}
 
-	return <div className="some">
+	return <div className="some container mt-1">
 		<h1>Products list</h1>
 		<table>
 			<tbody>
@@ -51,6 +54,14 @@ export default function(){
 				</tr>
 			</tbody>
 		</table>
+		<hr/>
+		<ProductCard />
+		<hr/>
+		<ModalCard 
+			showed={showModal} 
+			onClose={() => setShowModal(true)}
+			onVisible={() => setShowModal(false)} 
+		/>
 	</div>;
 }
 
