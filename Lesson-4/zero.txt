@@ -1,0 +1,223 @@
+			<div>
+				<label htmlFor='name'>{arrForm[0].label}</label><br/>
+				<input
+					ref={inpName} 
+					defaultValue={arrForm[0].value}
+					onInput={() => changeValue( inpName, onChangeName )} 
+					type='text' 
+					id='name'/>
+			</div>
+
+			<div>
+				<label htmlFor='email'>Email</label><br/>
+				<input
+					ref={inpEmail} 
+					defaultValue={email} 
+					onInput={() => changeValue(inpEmail, onChangeEmail)}
+					type='email'
+					id='email'/>
+			</div>
+			<div>
+				<label htmlFor='phone'>Phone</label><br/>
+				<input
+					ref={inpPhone} 
+					defaultValue={phone} 
+					onInput={() => changeValue(inpPhone, onChangePhone)}
+					type='phone' 
+					id='phone'/>
+			</div>
+
+
+
+
+			let arrForm = [
+		{
+			label: 'Name',
+			value: name,
+			type: 'text',
+			pattern: /.+/,
+			msg: 'Хотя бы один символ',
+			inp: inpName,
+			change: onChangeName,
+			isValid: true
+		},
+		{
+			label: 'Email',
+			value: email,
+			type: 'email',
+			pattern: /^.+@.+\..+$/,
+      msg: 'Email вида sometext@mail.ru',
+			inp: inpEmail,
+			change: onChangeEmail,
+			isValid: true
+		},
+		{
+			label: 'Phone',
+			value: phone,
+			type: 'phone',
+			pattern: /^\d{7,14}$/,
+      msg: 'Только цифры, количество цифр от 7 до 14',
+			inp: inpPhone,
+			change: onChangePhone,
+			isValid: true
+		}
+	];
+
+
+
+	{arrForm.map((el) => ( 
+		<div key={el.label}>
+			<label htmlFor={el.label}>{el.label}</label><br/>
+			<input
+				ref={el.inp} 
+				defaultValue={el.value}
+				onInput={() => changeValue( el.inp, el.change )} 
+				type={el.type} 
+				id={el.label}
+			/>
+		</div>
+	))}
+
+
+
+
+
+
+
+	<div>
+				<label htmlFor='name'>Name</label><br/>
+				<input
+					ref={inpName} 
+					defaultValue={name}
+					onInput={() => changeValue( inpName, onChangeName )} 
+					type='text' 
+					id='name'/>
+			</div>
+
+			<div>
+				<label htmlFor='email'>Email</label><br/>
+				<input
+					ref={inpEmail} 
+					defaultValue={email} 
+					onInput={() => changeValue(inpEmail, onChangeEmail)}
+					type='email'
+					id='email'/>
+			</div>
+			<div>
+				<label htmlFor='phone'>Phone</label><br/>
+				<input
+					ref={inpPhone} 
+					defaultValue={phone} 
+					onInput={() => changeValue(inpPhone, onChangePhone)}
+					type='phone' 
+					id='phone'/>
+			</div>
+
+
+			// useEffect(() => {
+	// 	inpName.current.value = name;
+	// 	inpPhone.current.value = phone;
+	// 	inpEmail.current.value = email;
+	// }, [name, phone, email]);
+
+
+	/*backup*/
+
+	let arrForm = [
+		{
+			label: 'Name',
+			value: name,
+			type: 'text',
+			pattern: /.+/,
+			msg: 'Хотя бы один символ',
+			inp: inpName,
+			change: onChangeName,
+			isValid: true
+		},
+		{
+			label: 'Email',
+			value: email,
+			type: 'email',
+			pattern: /^.+@.+\..+$/,
+      msg: 'Email вида sometext@mail.ru',
+			inp: inpEmail,
+			change: onChangeEmail,
+			isValid: true
+		},
+		{
+			label: 'Phone',
+			value: phone,
+			type: 'phone',
+			pattern: /^\d{7,14}$/,
+      msg: 'Только цифры, количество цифр от 7 до 14',
+			inp: inpPhone,
+			change: onChangePhone,
+			isValid: true
+		}
+	];
+
+	let [ forms, setForms ] = useState(arrForm);
+
+
+
+	function changeValue(inp, callBack){
+		callBack(inp.current.value)
+	}
+
+	function getNext(){
+		let errArr = [];
+		let isError = true;
+
+		inpRefList.forEach((el, i) => {
+			let item = el.current;
+			let isValid = item.getAttribute('data-valid');
+			let pattern = arrForm[i].pattern;
+			console.log(item)
+			if(!pattern.test(item.value)){
+				item.setAttribute('data-valid', false);
+				//setForms([...forms, forms[i].isValid = false])
+				errArr.push(item.msg)
+				console.log(arrForm)
+			}else{
+				item.setAttribute('data-valid', true);
+				//setForms([...forms, forms[i].isValid = true])
+			}
+		});
+		
+		if(errArr.length == 0){
+			isError = false;
+		}
+
+		if(!isError){
+			onNext();
+		}
+	}
+
+	
+
+	return <div>
+		<h1>Input data</h1>
+		<hr/>
+		<form>
+			{arrForm.map((el) => ( 
+			<div key={el.label}>
+				<label htmlFor={el.label}>{el.label}</label><br/>
+				<input
+					ref={el.inp} 
+					defaultValue={el.value}
+					onInput={() => changeValue( el.inp, el.change )} 
+					type={el.type} 
+					id={el.label}
+					data-valid={el.isValid}
+				/>
+				{!el.isValid && <div className='text-danger'>{el.msg}</div>}
+				
+			</div>
+		  ))}
+			
+		</form>
+		<hr/>
+		<button type="button" className="btn btn-warning" onClick={onPrev}>Back to cart</button>
+		<button type="button" className="btn btn-primary" onClick={getNext}>Buy</button>
+	</div>;
+}

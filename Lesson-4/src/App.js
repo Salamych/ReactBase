@@ -1,77 +1,87 @@
 import React, { useState } from 'react'
-import MinMax from './MinMax';
-import Modal from './Modal';
-import BModal from 'react-bootstrap/Modal';
 
+import Cart from './Cart';
+import Order from './Order';
+import Result from './Result';
+
+import SettingContext from './contexts/settings'
 
 export default function(){
-	let [ products, setProducts ] = useState(productsStub());
-	let [ showDetails, setShowDetails ] = useState(false);
-	let [ showBoots, setShowBoots ] = useState(false);
+	/* settings */
+	let [ settings, setSettings ] = useState({ lang: 'ru', theme: 'light' });
 
-	let total = products.reduce((accum, el) => {return accum + (el.price*el.cnt)},0);
-	let setCnt = (id, cnt) => {
+	/* router parody */
+	let [ page, setPage ] = useState('cart');
+	let moveToCart = () => setPage('cart');
+	let moveToOrder= () => setPage('order');
+	let moveToResult = () => setPage('result');
+
+	/* products */
+	let [ products, setProducts ] = useState(productsStub());
+
+	let setProductCnt = (id, cnt) => {
 		setProducts(products.map(pr => pr.id != id ? pr : ({ ...pr, cnt })));
 	}
 
-	let rmProd = (id) => {
-		console.log(id)
-		setProducts(products.filter(pr => pr.id != id));
+	let removeProduct = (id) => {
+		setProducts(products.filter(el => el.id !== id));
 	}
 
-	return <div className="some container mt-1">
-		<h1>Products list</h1>
-		
-		<hr/>
-		<strong onClick={() => setShowDetails(true)}>Total: { total } </strong>
-		<Modal 
-			showed={showDetails} 
-			title={`${products.length} items in list, please pay order`}
-			onClose={() => setShowDetails(false)}
-		>
-			<table>
-				<tbody>
-					<tr>
-						<th>#</th>
-						<th>Title</th>
-						<th>Price</th>
-						<th>Cnt</th>
-						<th>Total</th>
-					</tr>
-					{ products.map((pr, i) => (
-						<tr key={pr.id}>
-							<td>{ i + 1 }</td>
-							<td>{ pr.title }</td>
-							<td>{ pr.price }</td>
-							<td>
-								<MinMax min={1} max={pr.rest} current={pr.cnt} onChange={cnt => setCnt(pr.id, cnt)} />
-							</td>
-							<td>{ pr.price*pr.cnt }</td>
-							<td>
-								<button type="button" onClick={ () => rmProd(pr.id) }>X</button>
-							</td>
-							<td>
-								<button type="button" onClick={ () => setCnt(pr.id, pr.rest) }>MAX</button>
-							</td>
-						</tr>
-					)) }
-				</tbody>
-			</table>
-		</Modal>
-		<hr/>
-		<footer>
-			<strong onClick={() => setShowBoots(true)}>bootestrap</strong>
-			<BModal show={showBoots} onHide={() => setShowBoots(false)}>
-				<BModal.Header>
-					Attention
-				</BModal.Header>
-				<BModal.Body>
-					<p>Hello, Bootstrap</p>
-				</BModal.Body>
-			</BModal>
-		</footer>
-		
-	</div>;
+	/*order */
+	let [ orderForm, setOrderForm ] = useState([
+		{name: 'email', label: 'Email', value: '', valid: false, pattern: /^.+@.+$/},
+		{name: 'phone', label: 'Phone', value: '', valid: false, pattern: /^\d{5,10}$/},
+		{name: 'name', label: 'Name', value: '', valid: false, pattern: /^.{2,}$/},
+	]);
+
+	let orderData = {};
+	
+	orderForm.forEach(field => {
+		orderData[field.name] = field.value;
+	});
+
+	let orderFormUpdate = (name, value) => {
+		setOrderForm(orderForm.map(field => {
+			if(field.name != name){
+				return field;
+			}
+			
+			let valid = field.pattern.test(value);
+			return {...field, value, valid}
+		}));
+	}
+
+	return <SettingContext.Provider value={settings}>
+		<div className="container mt-1">
+			{ page === 'cart' && 
+				<Cart 
+					onNext={moveToOrder} 
+					products={products}
+					onChange={setProductCnt}
+					onRemove={removeProduct}
+				/> 
+			}
+			{ page === 'order' && 
+				<Order 
+					fields={orderForm} 
+					onChange={orderFormUpdate}
+					onNext={moveToResult} 
+					onPrev={moveToCart}  
+				/> 
+			}
+			{ page === 'result' && 
+				<Result 
+					products={products} 
+					orderData={orderData}
+				/> 
+			}
+			<hr/>
+			<footer>
+				<button type="button" onClick={() => setSettings({ ...settings, lang: 'ru' })}>ru</button>
+				<button type="button" onClick={() => setSettings({ ...settings, lang: 'en' })}>en</button>
+			</footer>
+		</div>
+	</SettingContext.Provider>;
 }
 
 function productsStub(){

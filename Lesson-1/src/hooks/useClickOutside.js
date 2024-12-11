@@ -7,10 +7,16 @@ export default function(ref, callback){
     let getCalback = (e) => {
       console.log(ref)
       if(!ref.current.contains(e.target)) callback()
-      };
-    window.addEventListener('click', getCalback);
+    };
 
-    return ()=> window.removeEventListener('click', getCalback);
+    window.addEventListener('mousedown', getCalback);
+    window.addEventListener('touchstart', getCalback);
+    
+
+    return ()=> {
+      window.removeEventListener('mousedown', getCalback);
+      window.removeEventListener('touchstart', getCalback);
+    };
 
   }, [ref, callback])
 }
